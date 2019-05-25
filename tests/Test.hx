@@ -21,4 +21,12 @@ class Test extends utest.Test
         1.5.deepEquals(1.5) == true;
         30.2.deepEquals(2.4) == false;
     }
+
+    public function specBool():Void
+    {
+        true.deepEquals(true) == true;
+        false.deepEquals(false) == true;
+        true.deepEquals(false) == false;
+        false.deepEquals(true) == false;
+    }
 }

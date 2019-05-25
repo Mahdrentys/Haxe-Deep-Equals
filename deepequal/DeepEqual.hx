@@ -15,7 +15,7 @@ class DeepEqual
         {
             return true;
         }
-        else if (type.match(TInt) || type.match(TFloat))
+        else if (type.match(TInt) || type.match(TFloat) || type.match(TBool))
         {
             return a == b;
         }

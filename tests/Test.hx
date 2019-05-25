@@ -29,4 +29,11 @@ class Test extends utest.Test
         true.deepEquals(false) == false;
         false.deepEquals(true) == false;
     }
+
+    public function specClass():Void
+    {
+        Array.deepEquals(Array) == true;
+        String.deepEquals(String) == true;
+        Array.deepEquals(String) == false;
+    }
 }

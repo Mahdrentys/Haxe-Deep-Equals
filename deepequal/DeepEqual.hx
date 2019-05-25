@@ -1,9 +1,15 @@
 package deepequal;
 
 import haxe.EnumTools;
+using Reflect;
 
 class DeepEqual
 {
+    private static function isClass(value:Dynamic):Bool
+    {
+        return Type.typeof(value).match(TObject) && value.fields().indexOf("__name__") != -1;
+    }
+
     public static function deepEquals(a:Dynamic, b:Dynamic):Bool
     {
         var aType = Type.typeof(a);
@@ -18,6 +24,10 @@ class DeepEqual
         else if (type.match(TInt) || type.match(TFloat) || type.match(TBool))
         {
             return a == b;
+        }
+        else if (isClass(a) && isClass(b))
+        {
+            return Type.getClassName(a) == Type.getClassName(b);
         }
 
         return true;

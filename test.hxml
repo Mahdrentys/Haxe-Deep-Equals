@@ -1,0 +1,4 @@
+-main tests.Runner
+-lib utest
+-js tests/test.js
+-cmd node tests/test.js

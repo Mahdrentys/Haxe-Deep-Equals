@@ -15,6 +15,10 @@ class DeepEqual
         {
             return true;
         }
+        else if (type.match(TInt))
+        {
+            return a == b;
+        }
 
         return true;
     }

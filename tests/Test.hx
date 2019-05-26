@@ -2,6 +2,13 @@ package tests;
 
 using deepequals.DeepEquals;
 
+private enum TestEnum
+{
+    Value1;
+    Value2;
+    Value3(param:Int);
+}
+
 class Test extends utest.Test
 {
     public function specNull():Void
@@ -43,5 +50,16 @@ class Test extends utest.Test
         [0, 1, 2].deepEquals([0, 1, 2]) == true;
         [0, 1].deepEquals([0, 1, 2]) == false;
         [0, 1, 3].deepEquals([0, 1, 2]) == false;
+    }
+    
+    public function specEnum():Void
+    {
+        TestEnum.deepEquals(TestEnum) == true;
+        TestEnum.deepEquals(Type.ValueType) == false;
+        
+        Value1.deepEquals(Value1) == true;
+        Value1.deepEquals(Value2) == false;
+        Value3(1).deepEquals(Value3(1)) == true;
+        Value3(1).deepEquals(Value3(2)) == false;
     }
 }

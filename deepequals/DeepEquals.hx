@@ -1,6 +1,7 @@
 package deepequals;
 
-import haxe.EnumTools;
+import Type;
+using haxe.EnumTools.EnumValueTools;
 using Reflect;
 using haxe.EnumTools.EnumValueTools;
 
@@ -14,6 +15,11 @@ class DeepEquals
     inline private static function isArray(value:Dynamic):Bool
     {
         return Type.typeof(value).match(TClass(_)) && deepEquals(Type.typeof(value).getParameters()[0], Array);
+    }
+
+    inline private static function isEnum(value:Dynamic):Bool
+    {
+        return Type.typeof(value).match(TObject) && value.fields().indexOf("__ename__") != -1;
     }
 
     public static function deepEquals(a:Dynamic, b:Dynamic):Bool
@@ -44,6 +50,22 @@ class DeepEquals
                 if (!deepEquals(a[i], b[i])) return false;
             }
 
+            return true;
+        }
+        else if (isEnum(a) && isEnum(b))
+        {
+            return Type.getEnumName(a) == Type.getEnumName(b);
+        }
+        else if (type.match(TEnum(_)))
+        {
+            function getEnumName(value:ValueType):String
+            {
+                return Type.getEnumName(value.getParameters()[0]);
+            }
+
+            if (getEnumName(aType) != getEnumName(bType)) return false;
+            if (EnumValueTools.getName(a) != EnumValueTools.getName(b)) return false;
+            if (!deepEquals(EnumValueTools.getParameters(a), EnumValueTools.getParameters(b))) return false;
             return true;
         }
 

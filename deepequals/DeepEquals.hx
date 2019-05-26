@@ -5,6 +5,7 @@ import haxe.ds.StringMap;
 import haxe.ds.IntMap;
 import haxe.ds.EnumValueMap;
 import haxe.ds.ObjectMap;
+import haxe.ds.Vector;
 using haxe.EnumTools.EnumValueTools;
 using Reflect;
 using Type;
@@ -127,6 +128,18 @@ class DeepEquals
         });
 
         handle(Array, function(a:Array<Dynamic>, b:Array<Dynamic>):Bool
+        {
+            if (a.length != b.length) return false;
+
+            for (i in 0...a.length)
+            {
+                if (!deepEquals(a[i], b[i])) return false;
+            }
+
+            return true;
+        });
+
+        handle(Vector, function(a:Vector<Dynamic>, b:Vector<Dynamic>):Bool
         {
             if (a.length != b.length) return false;
 

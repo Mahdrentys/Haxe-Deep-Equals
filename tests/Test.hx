@@ -1,6 +1,7 @@
 package tests;
 
 import haxe.ds.StringMap;
+import haxe.ds.Vector;
 using deepequals.DeepEquals;
 
 private enum TestEnum
@@ -74,6 +75,14 @@ class Test extends utest.Test
         [0, 1, 2].deepEquals([0, 1, 2]) == true;
         [0, 1].deepEquals([0, 1, 2]) == false;
         [0, 1, 3].deepEquals([0, 1, 2]) == false;
+    }
+
+    public function specVector():Void
+    {
+        Vector.fromArrayCopy([]).deepEquals(Vector.fromArrayCopy([])) == true;
+        Vector.fromArrayCopy([0, 1, 2]).deepEquals(Vector.fromArrayCopy([0, 1, 2])) == true;
+        Vector.fromArrayCopy([0, 1]).deepEquals(Vector.fromArrayCopy([0, 1, 2])) == false;
+        Vector.fromArrayCopy([0, 1, 3]).deepEquals(Vector.fromArrayCopy([0, 1, 2])) == false;
     }
     
     public function specEnum():Void

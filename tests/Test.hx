@@ -62,4 +62,10 @@ class Test extends utest.Test
         Value3(1).deepEquals(Value3(1)) == true;
         Value3(1).deepEquals(Value3(2)) == false;
     }
+
+    public function specFunction():Void
+    {
+        function(){}.deepEquals(function(){}) == true;
+        function(){}.deepEquals(function(){}, false) == false;
+    }
 }

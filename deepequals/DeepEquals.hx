@@ -22,7 +22,7 @@ class DeepEquals
         return Type.typeof(value).match(TObject) && value.fields().indexOf("__ename__") != -1;
     }
 
-    public static function deepEquals(a:Dynamic, b:Dynamic):Bool
+    public static function deepEquals(a:Dynamic, b:Dynamic, equalFunctions = true):Bool
     {
         var aType = Type.typeof(a);
         var bType = Type.typeof(b);
@@ -67,6 +67,10 @@ class DeepEquals
             if (EnumValueTools.getName(a) != EnumValueTools.getName(b)) return false;
             if (!deepEquals(EnumValueTools.getParameters(a), EnumValueTools.getParameters(b))) return false;
             return true;
+        }
+        else if (type.match(TFunction))
+        {
+            return equalFunctions;
         }
 
         return true;

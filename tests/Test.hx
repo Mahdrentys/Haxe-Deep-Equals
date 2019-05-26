@@ -10,6 +10,22 @@ private enum TestEnum
     Value3(param:Int);
 }
 
+private class TestClass
+{
+    public var a = "";
+    private var b:Int;
+
+    public function new(_b:Int)
+    {
+        b = _b;
+    }
+
+    public function getB():Int
+    {
+        return b;
+    }
+}
+
 class Test extends utest.Test
 {
     public function specNull():Void
@@ -110,5 +126,33 @@ class Test extends utest.Test
         map1.deepEquals(map3) == true;
         map1.deepEquals(map4) == false;
         map1.deepEquals(map5) == false;
+    }
+
+    public function specInstance():Void
+    {
+        var a = new TestClass(1);
+        var b = new TestClass(1);
+        var c = new TestClass(2);
+        var d = new TestClass(1);
+        d.a = "a";
+        a.deepEquals(b) == true;
+        a.deepEquals(c) == false;
+        a.deepEquals(d) == false;
+
+        DeepEquals.handle(TestClass, function(a:TestClass, b:TestClass):Bool
+        {
+            return false;
+        });
+
+        a.deepEquals(b) == false;
+
+        DeepEquals.handle(TestClass, function(a:TestClass, b:TestClass):Bool
+        {
+            return b.getB() > a.getB();
+        });
+
+        a.deepEquals(c) == true;
+        c.deepEquals(a) == false;
+        DeepEquals.unHandle(TestClass);
     }
 }

@@ -7,10 +7,13 @@ import haxe.ds.EnumValueMap;
 import haxe.ds.ObjectMap;
 using haxe.EnumTools.EnumValueTools;
 using Reflect;
+using Type;
 using haxe.EnumTools.EnumValueTools;
 
 class DeepEquals
 {
+    private static var handlers = new Map<String, Dynamic->Dynamic->Bool>();
+
     inline private static function isInstanceOf(value:Dynamic, classType:Class<Dynamic>):Bool
     {
         return Type.typeof(value).match(TClass(_)) && deepEquals(Type.typeof(value).getParameters()[0], classType);
@@ -128,7 +131,46 @@ class DeepEquals
 
             return true;
         }
+        else if (type.match(TClass(_)))
+        {
+            var aClass = cast(aType.getParameters()[0], Class<Dynamic>);
+            var bClass = cast(bType.getParameters()[0], Class<Dynamic>);
+            if (!deepEquals(aClass, bClass)) return false;
+
+            if (handlers.exists(aClass.getClassName()))
+            {
+                return handlers[aClass.getClassName()](a, b);
+            }
+
+            var fields = aClass.getInstanceFields();
+            fields = fields.filter(function(field:String):Bool
+            {
+                return !Type.typeof(a.getProperty(field)).match(TFunction);
+            });
+
+            for (field in fields)
+            {
+                if (!deepEquals(a.getProperty(field), b.getProperty(field))) return false;
+            }
+
+            return true;
+        }
 
         return false;
+    }
+
+    public static function handle<T>(type:Class<T>, func:T->T->Bool):Void
+    {
+        handlers[type.getClassName()] = function(a:Dynamic, b:Dynamic):Bool
+        {
+            var castedA:T = cast a;
+            var castedB:T = cast b;
+            return func(castedA, castedB);
+        };
+    }
+
+    public static function unHandle<T>(type:Class<T>):Void
+    {
+        handlers.remove(type.getClassName());
     }
 }

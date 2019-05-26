@@ -15,34 +15,14 @@ class DeepEquals
     private static var handlers = new Map<String, Dynamic->Dynamic->Bool>();
     private static var initialized = false;
 
-    inline private static function isInstanceOf(value:Dynamic, classType:Class<Dynamic>):Bool
-    {
-        return Type.typeof(value).match(TClass(_)) && deepEquals(Type.typeof(value).getParameters()[0], classType);
-    }
-
-    inline private static function isString(value:Dynamic):Bool
-    {
-        return isInstanceOf(value, String);
-    }
-
     inline private static function isClass(value:Dynamic):Bool
     {
         return Type.typeof(value).match(TObject) && value.fields().indexOf("__name__") != -1;
     }
 
-    inline private static function isArray(value:Dynamic):Bool
-    {
-        return isInstanceOf(value, Array);
-    }
-
     inline private static function isEnum(value:Dynamic):Bool
     {
         return Type.typeof(value).match(TObject) && value.fields().indexOf("__ename__") != -1;
-    }
-
-    inline private static function isMap(value:Dynamic):Bool
-    {
-        return isInstanceOf(value, Map) || isInstanceOf(value, StringMap) || isInstanceOf(value, IntMap) || isInstanceOf(value, EnumValueMap) || isInstanceOf(value, ObjectMap);
     }
 
     public static function deepEquals(a:Dynamic, b:Dynamic, equalFunctions = true):Bool
@@ -58,24 +38,13 @@ class DeepEquals
         {
             return true;
         }
-        else if (type.match(TInt) || type.match(TFloat) || type.match(TBool) || (isString(a) && isString(b)))
+        else if (type.match(TInt) || type.match(TFloat) || type.match(TBool))
         {
             return a == b;
         }
         else if (isClass(a) && isClass(b))
         {
             return Type.getClassName(a) == Type.getClassName(b);
-        }
-        else if (isArray(a) && isArray(b))
-        {
-            if (a.length != b.length) return false;
-
-            for (i in 0...a.length)
-            {
-                if (!deepEquals(a[i], b[i])) return false;
-            }
-
-            return true;
         }
         else if (isEnum(a) && isEnum(b))
         {
@@ -108,32 +77,6 @@ class DeepEquals
 
             return true;
         }
-        else if (isMap(a) && isMap(b))
-        {
-            var aMap = cast(a, Map<Dynamic, Dynamic>);
-            var bMap = cast(b, Map<Dynamic, Dynamic>);
-            var aKeys:Array<Dynamic> = [];
-            var bKeys:Array<Dynamic> = [];
-
-            for (key in aMap.keys())
-            {
-                aKeys.push(key);
-            }
-
-            for (key in bMap.keys())
-            {
-                bKeys.push(key);
-            }
-
-            if (!deepEquals(aKeys, bKeys)) return false;
-
-            for (key in aKeys)
-            {
-                if (!deepEquals(aMap[key], bMap[key])) return false;
-            }
-
-            return true;
-        }
         else if (type.match(TClass(_)))
         {
             var aClass = cast(aType.getParameters()[0], Class<Dynamic>);
@@ -162,16 +105,10 @@ class DeepEquals
         return false;
     }
 
-    public static function handle<T>(type:Class<T>, func:T->T->Bool):Void
+    public static function handle(type:Class<Dynamic>, func:Dynamic->Dynamic->Bool):Void
     {
         if (!initialized) initialize();
-
-        handlers[type.getClassName()] = function(a:Dynamic, b:Dynamic):Bool
-        {
-            var castedA:T = cast a;
-            var castedB:T = cast b;
-            return func(castedA, castedB);
-        };
+        handlers[type.getClassName()] = func;
     }
 
     public static function unHandle<T>(type:Class<T>):Void
@@ -183,7 +120,82 @@ class DeepEquals
     private static function initialize():Void
     {
         initialized = true;
-        
+
+        handle(String, function(a:String, b:String):Bool
+        {
+            return a == b;
+        });
+
+        handle(Array, function(a:Array<Dynamic>, b:Array<Dynamic>):Bool
+        {
+            if (a.length != b.length) return false;
+
+            for (i in 0...a.length)
+            {
+                if (!deepEquals(a[i], b[i])) return false;
+            }
+
+            return true;
+        });
+
+        function checkMap(a:Map<Dynamic, Dynamic>, b:Map<Dynamic, Dynamic>):Bool
+        {
+            var aKeys:Array<Dynamic> = [];
+            var bKeys:Array<Dynamic> = [];
+
+            for (key in a.keys())
+            {
+                aKeys.push(key);
+            }
+
+            for (key in b.keys())
+            {
+                bKeys.push(key);
+            }
+
+            if (!deepEquals(aKeys, bKeys)) return false;
+
+            for (key in aKeys)
+            {
+                if (!deepEquals(a[key], b[key])) return false;
+            }
+
+            return true;
+        }
+
+        handle(Map, function(a:Map<Dynamic, Dynamic>, b:Map<Dynamic, Dynamic>):Bool
+        {
+            return checkMap(a, b);
+        });
+
+        handle(StringMap, function(a:StringMap<Dynamic>, b:StringMap<Dynamic>):Bool
+        {
+            var castedA:Map<Dynamic, Dynamic> = cast a;
+            var castedB:Map<Dynamic, Dynamic> = cast b;
+            return checkMap(castedA, castedB);
+        });
+
+        handle(IntMap, function(a:StringMap<Dynamic>, b:StringMap<Dynamic>):Bool
+        {
+            var castedA:Map<Dynamic, Dynamic> = cast a;
+            var castedB:Map<Dynamic, Dynamic> = cast b;
+            return checkMap(castedA, castedB);
+        });
+
+        handle(EnumValueMap, function(a:StringMap<Dynamic>, b:StringMap<Dynamic>):Bool
+        {
+            var castedA:Map<Dynamic, Dynamic> = cast a;
+            var castedB:Map<Dynamic, Dynamic> = cast b;
+            return checkMap(castedA, castedB);
+        });
+
+        handle(ObjectMap, function(a:StringMap<Dynamic>, b:StringMap<Dynamic>):Bool
+        {
+            var castedA:Map<Dynamic, Dynamic> = cast a;
+            var castedB:Map<Dynamic, Dynamic> = cast b;
+            return checkMap(castedA, castedB);
+        });
+
         handle(Date, function(a:Date, b:Date):Bool
         {
             return a.getTime() == b.getTime();

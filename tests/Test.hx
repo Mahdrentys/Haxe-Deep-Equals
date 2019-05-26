@@ -75,4 +75,12 @@ class Test extends utest.Test
         function(){}.deepEquals(function(){}) == true;
         function(){}.deepEquals(function(){}, false) == false;
     }
+
+    public function specStruct():Void
+    {
+        ({}).deepEquals({}) == true;
+        ({a: 1, b: "3"}).deepEquals({a: 1, b: "3"}) == true;
+        ({a: 1, b: "4"}).deepEquals({a: 1, b: "3"}) == false;
+        ({a: 1}).deepEquals({a: 1, b: "3"}) == false;
+    }
 }

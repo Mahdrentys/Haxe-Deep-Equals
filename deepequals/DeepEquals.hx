@@ -77,6 +77,17 @@ class DeepEquals
         {
             return equalFunctions;
         }
+        else if (type.match(TObject))
+        {
+            if (!deepEquals(a.fields(), b.fields())) return false;
+
+            for (field in a.fields())
+            {
+                if (!deepEquals(a.field(field), b.field(field))) return false;
+            }
+
+            return true;
+        }
 
         return true;
     }

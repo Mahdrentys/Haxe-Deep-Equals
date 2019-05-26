@@ -7,6 +7,11 @@ using haxe.EnumTools.EnumValueTools;
 
 class DeepEquals
 {
+    inline private static function isString(value:Dynamic):Bool
+    {
+        return Type.typeof(value).match(TClass(_)) && deepEquals(Type.typeof(value).getParameters()[0], String);
+    }
+
     inline private static function isClass(value:Dynamic):Bool
     {
         return Type.typeof(value).match(TObject) && value.fields().indexOf("__name__") != -1;
@@ -33,7 +38,7 @@ class DeepEquals
         {
             return true;
         }
-        else if (type.match(TInt) || type.match(TFloat) || type.match(TBool))
+        else if (type.match(TInt) || type.match(TFloat) || type.match(TBool) || (isString(a) && isString(b)))
         {
             return a == b;
         }

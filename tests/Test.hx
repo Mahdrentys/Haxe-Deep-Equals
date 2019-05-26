@@ -37,6 +37,13 @@ class Test extends utest.Test
         false.deepEquals(true) == false;
     }
 
+    public function specString():Void
+    {
+        "".deepEquals("") == true;
+        "aze".deepEquals("aze") == true;
+        "aze".deepEquals("azer") == false;
+    }
+
     public function specClass():Void
     {
         Array.deepEquals(Array) == true;

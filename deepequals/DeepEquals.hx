@@ -1,9 +1,9 @@
-package deepequal;
+package deepequals;
 
 import haxe.EnumTools;
 using Reflect;
 
-class DeepEqual
+class DeepEquals
 {
     private static function isClass(value:Dynamic):Bool
     {

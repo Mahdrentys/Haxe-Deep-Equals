@@ -1,13 +1,13 @@
 package tests;
 
-using deepequal.DeepEqual;
+using deepequals.DeepEquals;
 
 class Test extends utest.Test
 {
     public function specNull():Void
     {
-        DeepEqual.deepEquals(null, null) == true;
-        DeepEqual.deepEquals(null, 0) == false;
+        DeepEquals.deepEquals(null, null) == true;
+        DeepEquals.deepEquals(null, 0) == false;
     }
 
     public function specInt():Void

@@ -1,8 +1,8 @@
 {
-    "name": "deep-equal",
-    "url" : "https://github.com/Mahdrentys/Haxe-Deep-Equal",
+    "name": "deep-equals",
+    "url" : "https://github.com/Mahdrentys/Haxe-Deep-Equals",
     "license": "MIT",
-    "tags": ["deep", "equal", "equality", "checker"],
+    "tags": ["deep", "equal", "equals", "equality", "checker"],
     "description": "Deep equality checker (as static extension).",
     "version": "0.0.0",
     "classPath": "",

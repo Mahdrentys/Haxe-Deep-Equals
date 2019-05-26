@@ -1,15 +1,24 @@
 package deepequals;
 
 import Type;
+import haxe.ds.StringMap;
+import haxe.ds.IntMap;
+import haxe.ds.EnumValueMap;
+import haxe.ds.ObjectMap;
 using haxe.EnumTools.EnumValueTools;
 using Reflect;
 using haxe.EnumTools.EnumValueTools;
 
 class DeepEquals
 {
+    inline private static function isInstanceOf(value:Dynamic, classType:Class<Dynamic>):Bool
+    {
+        return Type.typeof(value).match(TClass(_)) && deepEquals(Type.typeof(value).getParameters()[0], classType);
+    }
+
     inline private static function isString(value:Dynamic):Bool
     {
-        return Type.typeof(value).match(TClass(_)) && deepEquals(Type.typeof(value).getParameters()[0], String);
+        return isInstanceOf(value, String);
     }
 
     inline private static function isClass(value:Dynamic):Bool
@@ -19,12 +28,17 @@ class DeepEquals
 
     inline private static function isArray(value:Dynamic):Bool
     {
-        return Type.typeof(value).match(TClass(_)) && deepEquals(Type.typeof(value).getParameters()[0], Array);
+        return isInstanceOf(value, Array);
     }
 
     inline private static function isEnum(value:Dynamic):Bool
     {
         return Type.typeof(value).match(TObject) && value.fields().indexOf("__ename__") != -1;
+    }
+
+    inline private static function isMap(value:Dynamic):Bool
+    {
+        return isInstanceOf(value, Map) || isInstanceOf(value, StringMap) || isInstanceOf(value, IntMap) || isInstanceOf(value, EnumValueMap) || isInstanceOf(value, ObjectMap);
     }
 
     public static function deepEquals(a:Dynamic, b:Dynamic, equalFunctions = true):Bool
@@ -88,7 +102,33 @@ class DeepEquals
 
             return true;
         }
+        else if (isMap(a) && isMap(b))
+        {
+            var aMap = cast(a, Map<Dynamic, Dynamic>);
+            var bMap = cast(b, Map<Dynamic, Dynamic>);
+            var aKeys:Array<Dynamic> = [];
+            var bKeys:Array<Dynamic> = [];
 
-        return true;
+            for (key in aMap.keys())
+            {
+                aKeys.push(key);
+            }
+
+            for (key in bMap.keys())
+            {
+                bKeys.push(key);
+            }
+
+            if (!deepEquals(aKeys, bKeys)) return false;
+
+            for (key in aKeys)
+            {
+                if (!deepEquals(aMap[key], bMap[key])) return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }

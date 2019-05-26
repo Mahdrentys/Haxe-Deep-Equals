@@ -1,5 +1,6 @@
 package tests;
 
+import haxe.ds.StringMap;
 using deepequals.DeepEquals;
 
 private enum TestEnum
@@ -82,5 +83,32 @@ class Test extends utest.Test
         ({a: 1, b: "3"}).deepEquals({a: 1, b: "3"}) == true;
         ({a: 1, b: "4"}).deepEquals({a: 1, b: "3"}) == false;
         ({a: 1}).deepEquals({a: 1, b: "3"}) == false;
+    }
+
+    public function specMap():Void
+    {
+        var map1 = new Map<String, Int>();
+        map1["a"] = 1;
+        map1["b"] = 2;
+
+        var map2 = new Map<String, Int>();
+        map2["a"] = 1;
+        map2["b"] = 2;
+
+        var map3 = new StringMap<Int>();
+        map3.set("a", 1);
+        map3.set("b", 2);
+
+        var map4 = new Map<String, Int>();
+        map4["a"] = 1;
+
+        var map5 = new Map<String, Int>();
+        map5["a"] = 1;
+        map5["b"] = 3;
+
+        map1.deepEquals(map2) == true;
+        map1.deepEquals(map3) == true;
+        map1.deepEquals(map4) == false;
+        map1.deepEquals(map5) == false;
     }
 }

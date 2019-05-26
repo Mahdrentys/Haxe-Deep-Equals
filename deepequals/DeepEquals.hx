@@ -164,6 +164,8 @@ class DeepEquals
 
     public static function handle<T>(type:Class<T>, func:T->T->Bool):Void
     {
+        if (!initialized) initialize();
+
         handlers[type.getClassName()] = function(a:Dynamic, b:Dynamic):Bool
         {
             var castedA:T = cast a;
@@ -180,11 +182,11 @@ class DeepEquals
 
     private static function initialize():Void
     {
+        initialized = true;
+        
         handle(Date, function(a:Date, b:Date):Bool
         {
             return a.getTime() == b.getTime();
         });
-
-        initialized = true;
     }
 }

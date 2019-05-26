@@ -13,6 +13,7 @@ using haxe.EnumTools.EnumValueTools;
 class DeepEquals
 {
     private static var handlers = new Map<String, Dynamic->Dynamic->Bool>();
+    private static var initialized = false;
 
     inline private static function isInstanceOf(value:Dynamic, classType:Class<Dynamic>):Bool
     {
@@ -46,6 +47,8 @@ class DeepEquals
 
     public static function deepEquals(a:Dynamic, b:Dynamic, equalFunctions = true):Bool
     {
+        if (!initialized) initialize();
+
         var aType = Type.typeof(a);
         var bType = Type.typeof(b);
         if (aType.getIndex() != bType.getIndex()) return false;
@@ -171,6 +174,17 @@ class DeepEquals
 
     public static function unHandle<T>(type:Class<T>):Void
     {
+        if (!initialized) initialize();
         handlers.remove(type.getClassName());
+    }
+
+    private static function initialize():Void
+    {
+        handle(Date, function(a:Date, b:Date):Bool
+        {
+            return a.getTime() == b.getTime();
+        });
+
+        initialized = true;
     }
 }

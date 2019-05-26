@@ -155,4 +155,10 @@ class Test extends utest.Test
         c.deepEquals(a) == false;
         DeepEquals.unHandle(TestClass);
     }
+
+    public function specDate():Void
+    {
+        new Date(2019, 0, 1, 0, 0, 0).deepEquals(new Date(2019, 0, 1, 0, 0, 0)) == true;
+        new Date(2019, 0, 1, 0, 0, 0).deepEquals(new Date(2019, 0, 1, 0, 0, 1)) == false;
+    }
 }

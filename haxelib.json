@@ -4,7 +4,7 @@
     "license": "MIT",
     "tags": ["deep", "equal", "equals", "equality", "checker"],
     "description": "Deep equality checker (as static extension).",
-    "version": "0.0.0",
+    "version": "1.0.0",
     "classPath": "",
     "releasenote": "",
     "contributors": ["Mahdrentys"],

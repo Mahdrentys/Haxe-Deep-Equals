@@ -18,12 +18,12 @@ class DeepEquals
 
     inline private static function isClass(value:Dynamic):Bool
     {
-        return Type.typeof(value).match(TObject) && value.fields().indexOf("__name__") != -1;
+        return Std.is(value, Class);
     }
 
     inline private static function isEnum(value:Dynamic):Bool
     {
-        return Type.typeof(value).match(TObject) && value.fields().indexOf("__ename__") != -1;
+        return Std.is(value, Enum);
     }
 
     public static function deepEquals(a:Dynamic, b:Dynamic, equalFunctions = true):Bool

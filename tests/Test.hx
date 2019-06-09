@@ -98,8 +98,8 @@ class Test extends utest.Test
 
     public function specFunction():Void
     {
-        function(){}.deepEquals(function(){}) == true;
-        function(){}.deepEquals(function(){}, false) == false;
+        (function(){}).deepEquals(function(){}) == true;
+        (function(){}).deepEquals(function(){}, false) == false;
     }
 
     public function specStruct():Void
